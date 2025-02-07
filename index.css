@@ -1,0 +1,225 @@
+/* 全局背景色 */
+body {
+    background-color: #f3e9d7; /* 米黄色 */
+}
+
+/* 导航栏样式 */
+nav {
+    background-color: #a48a6095;
+    color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(241, 214, 175, 0.259);
+}
+
+/* Logo 样式 */
+nav div {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* 导航列表样式 */
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center; /* 使右侧选项居中 */
+}
+
+/* 列表项样式 */
+nav ul li {
+    margin-right: 1.5rem;
+}
+
+/* 链接样式 */
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.3s;
+}
+
+/* 链接悬停效果 */
+nav ul li a:hover {
+    color: #f7c65d;
+}
+
+/* 最后一个列表项的右边距去除 */
+nav ul li:last-child {
+    margin-right: 0;
+}
+
+/* 主页宣传框 */
+section {
+    background-color: #f9f9f992; /* 浅灰色背景 */
+    border: 1px solid #ddd; /* 边框 */
+    padding: 20px; /* 内边距 */
+    margin: 20px auto; /* 上下外边距，水平居中 */
+    max-width: 800px; /* 最大宽度 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.24); /* 阴影效果 */
+    border-radius: 10px; /* 圆角边框 */
+}
+
+/*练习界面选项*/
+.options-container {
+    display: flex;
+    flex-direction: column; /* 改为垂直布局 */
+    gap: 30px; /* 增加选项间距 */
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* 全屏高度 */
+    width: 100%;
+    padding: 20px; /* 增加内边距 */
+} 
+
+
+.option {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%; /* 调整选项宽度 */
+    max-width: 500px; /* 设置最大宽度 */
+    height: 35vh; /* 固定高度 */
+    font-size: 28px; /* 增加字体大小 */
+    font-weight: bold;
+    color: rgb(104, 103, 103);
+    background-color: #e6e0c58a;
+    border-radius: 20px; /* 加大圆角 */
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* 增强阴影效果 */
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+.option:hover {
+    transform: scale(1.1); /* 增强放大效果 */
+    background-color: #baac64d9; /* 更深的悬停颜色 */
+}
+
+/* 表单区域 */
+#setup {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    margin: 0 auto;
+}
+
+label {
+    font-size: 16px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+input[type="number"],
+select {
+    padding: 8px;
+    font-size: 16px;
+    margin: 5px 0 15px;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.Sbutton {
+    background-color: #aa8d3ed0;
+    color: #fff;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.Sbutton:hover {
+    background-color: #aa8d3e;
+}
+
+/* 题目区域 */
+#quiz {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    margin: 20px auto;
+}
+
+.question {
+    margin-bottom: 15px;
+}
+
+input[type="number"] {
+    width: auto;
+    display: inline-block;
+    margin-left: 10px;
+    padding: 5px;
+    font-size: 16px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+/* 结算区域 */
+.summary {
+    background-color: #ffffff8e;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    margin: 20px auto;
+    font-size: 25px;
+    text-align: center;  /* 文字居中 */
+}
+
+.summary br {
+    margin-bottom: 10px;
+}
+
+.summary strong {
+    color: #e74c3c;
+}
+
+.summary span {
+    color: #aa8d3ed0;
+}
+
+.summary p {
+    margin-bottom: 10px;
+}
+
+
+/* 返回按钮 */
+.backButton {
+    position: fixed;      /* 固定在页面上，不随滚动条移动 */
+    top: 10px;            /* 离顶部 10px */
+    right: 16px;          /* 离右边 16px */
+    padding: 5px 10px;    /* 调整内边距 */
+    font-size: 14px;      /* 较小的字体 */
+    border: 0.5px solid rgb(118, 106, 69); /* 黑色边框 */
+    background-color: transparent; /* 透明背景 */
+    color: black;         /* 黑色字体 */
+    border-radius: 5px;   /* 圆角 */
+    cursor: pointer;      /* 光标样式 */
+    transition: background-color 0.3s ease; /* 悬停效果 */
+    z-index: 100;         /* 确保按钮在上层 */
+}
+
+.backButton:hover {
+    background-color: #f0f0f0; /* 悬停时背景色 */
+}
+
+
+

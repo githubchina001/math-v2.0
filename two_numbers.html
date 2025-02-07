@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>计算练习</title>
+    <link rel="stylesheet" href="index.css">
+    <style>
+       
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div>自定义练习</div>
+        <ul>
+            <li><a href="practise.html">返回</a></li>
+        </ul>
+    </nav>
+
+    
+    <br>
+    <div id="setup">
+        <label>
+            数字范围：
+            <input type="number" id="min" placeholder="最小值"> ~ <input type="number" id="max" placeholder="最大值">
+        </label>
+        <br>
+        <label>
+            运算符号：
+            <select id="operator">
+                <option value="+">加法 (+)</option>
+                <option value="-">减法 (-)</option>
+                <option value="*">乘法 (×)</option>
+                <option value="random">随机</option>
+            </select>
+        </label>
+        <br>
+        <label>
+            题量
+            <input type="number" id="numQuestions" min="1" placeholder="准备要做多少题？">
+        </label>
+        <br>
+        <button class="Sbutton" onclick="startQuiz()">开始练习</button>
+    </div>
+
+    <div id="quiz" style="display:none;">
+        <form id="quizForm"></form>
+        <button class="Sbutton" onclick="submitQuiz()">提交</button> 
+    </div>
+
+    <div id="summary" class="summary"></div>
+
+    <script>
+        let startTime;
+
+        function startQuiz() {
+            const min = parseInt(document.getElementById('min').value);
+            const max = parseInt(document.getElementById('max').value);
+            const operator = document.getElementById('operator').value;
+            const numQuestions = parseInt(document.getElementById('numQuestions').value);
+
+            if (isNaN(min) || isNaN(max) || isNaN(numQuestions) || numQuestions <= 0) {
+                alert('请输入正确的数字！');
+                return;
+            }
+
+            const quizForm = document.getElementById('quizForm');
+            quizForm.innerHTML = '';
+
+            for (let i = 0; i < numQuestions; i++) {
+                const num1 = Math.floor(Math.random() * (max - min + 1)) + min;
+                const num2 = Math.floor(Math.random() * (max - min + 1)) + min;
+                const op = operator === 'random' ? ['+', '-', '×'][Math.floor(Math.random() * 3)] : operator;
+
+                const questionId = `question${i + 1}`;
+                quizForm.innerHTML += `<div class="question">
+                    <label>${i + 1}. ${num1} ${op} ${num2} = 
+                        <input type="number" id="${questionId}" data-num1="${num1}" data-num2="${num2}" data-op="${op}">
+                    </label>
+                </div>`;
+            }
+
+            document.getElementById('setup').style.display = 'none';
+            document.getElementById('quiz').style.display = 'block';
+            startTime = new Date();
+        }
+
+        function submitQuiz() {
+            const quizForm = document.getElementById('quizForm');
+            const inputs = quizForm.querySelectorAll('input');
+
+            let correct = 0;
+            let incorrect = 0;
+            const mistakes = [];
+
+            inputs.forEach((input, index) => {
+                const num1 = parseInt(input.dataset.num1);
+                const num2 = parseInt(input.dataset.num2);
+                const op = input.dataset.op;
+                const userAnswer = parseFloat(input.value);
+
+                let correctAnswer;
+                switch (op) {
+                    case '+':
+                        correctAnswer = num1 + num2;
+                        break;
+                    case '-':
+                        correctAnswer = num1 - num2;
+                        break;
+                    case '×':
+                        correctAnswer = num1 * num2;
+                        break;
+                }
+
+                if (userAnswer === correctAnswer) {
+                    correct++;
+                } else {
+                    incorrect++;
+                    mistakes.push(`${index + 1}、${num1} ${op} ${num2} = ${correctAnswer}（我的答案：${userAnswer || '未填写'}）`);
+                }
+            });
+
+            const endTime = new Date();
+            const timeTaken = (endTime - startTime) / 1000;
+
+            const summary = document.getElementById('summary');
+            summary.innerHTML = `
+                结算 <br>
+                题数：${inputs.length} 题<br>
+                错误：${incorrect} 题<br>
+                正确：${correct} 题<br>
+                用时：${timeTaken.toFixed(3)} 秒<br>
+                平均用时：${(timeTaken / inputs.length).toFixed(3)} 秒/题<br>
+                <br>
+
+                错题<br>
+                ${mistakes.length ? mistakes.join('<br>') : '无'}<br>
+                
+            `;
+
+            document.getElementById('quiz').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

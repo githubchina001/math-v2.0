@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10以内加法练习</title>
+    <link rel="stylesheet" href="index.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .Sbutton {
+            background-color: #aa8d3ed0;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .Sbutton:hover {
+            background-color: #aa8d3e;
+        }
+
+        .summary {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .question {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div>20以内加法练习</div>
+        <ul>
+            <li><a href="challenge.html">返回</a></li>
+        </ul>
+    </nav>
+
+    <br>
+    <div id="setup">
+        <label>
+            题量：
+            <input type="number" id="numQuestions" min="1" placeholder="输入题量">
+        </label>
+        <br>
+        <button class="Sbutton" onclick="startQuiz()">开始练习</button>
+    </div>
+
+    <div id="quiz" style="display:none;">
+        <form id="quizForm"></form>
+        <button class="Sbutton" onclick="submitQuiz()">提交</button> 
+    </div>
+
+    <div id="summary" class="summary"></div>
+
+    <script>
+        let startTime;
+    
+        function startQuiz() {
+            const numQuestions = parseInt(document.getElementById('numQuestions').value);
+    
+            if (isNaN(numQuestions) || numQuestions <= 0) {
+                alert('请输入正确的题量！');
+                return;
+            }
+    
+            const quizForm = document.getElementById('quizForm');
+            quizForm.innerHTML = '';
+    
+            for (let i = 0; i < numQuestions; i++) {
+                const num1 = Math.floor(Math.random() * 11); // 生成0到10之间的随机数
+                const num2 = Math.floor(Math.random() * 11);
+    
+                const questionId = `question${i + 1}`;
+                quizForm.innerHTML += `<div class="question">
+                    <label>${i + 1}. ${num1} + ${num2} = 
+                        <input type="number" id="${questionId}" data-num1="${num1}" data-num2="${num2}" data-op="+">
+                    </label>
+                </div>`;
+            }
+    
+            document.getElementById('setup').style.display = 'none';
+            document.getElementById('quiz').style.display = 'block';
+            startTime = new Date();
+        }
+    
+        function submitQuiz() {
+            const quizForm = document.getElementById('quizForm');
+            const inputs = quizForm.querySelectorAll('input');
+    
+            let correct = 0;
+            let incorrect = 0;
+            const mistakes = [];
+    
+            inputs.forEach((input, index) => {
+                const num1 = parseInt(input.dataset.num1);
+                const num2 = parseInt(input.dataset.num2);
+                const userAnswer = parseFloat(input.value);
+    
+                const correctAnswer = num1 + num2;
+    
+                if (userAnswer === correctAnswer) {
+                    correct++;
+                } else {
+                    incorrect++;
+                    mistakes.push(`${index + 1}、${num1} + ${num2} = ${correctAnswer}（我的答案：${userAnswer || '未填写'}）`);
+                }
+            });
+    
+            const endTime = new Date();
+            const timeTaken = (endTime - startTime) / 1000;
+    
+            // 获取当前用户及其积分
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            if (!loggedInUser) {
+                alert('未找到登录用户，请重新登录！');
+                window.location.href = 'index.html'; // 跳转到登录页面
+                return;
+            }
+    
+            const userKey = `${loggedInUser}_points`;
+            let userPoints = parseInt(localStorage.getItem(userKey)) || 0;
+    
+            // 更新用户积分
+            userPoints += correct;
+            localStorage.setItem(userKey, userPoints);
+    
+            const summary = document.getElementById('summary');
+            summary.innerHTML = `
+                结算 <br>
+                题数：${inputs.length} 题<br>
+                正确：${correct} 题<br>
+                错误：${incorrect} 题<br>
+                用时：${timeTaken.toFixed(3)} 秒<br>
+                平均用时：${(timeTaken / inputs.length).toFixed(3)} 秒/题<br>
+                <br>
+    
+                当前用户累计积分：${userPoints} 分<br>
+                错题<br>
+                ${mistakes.length ? mistakes.join('<br>') : '无'}<br>
+            `;
+    
+            document.getElementById('quiz').style.display = 'none';
+        }
+    </script>
+    
+</body>
+</html>

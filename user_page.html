@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>计算练习</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <nav>
+        <div id="welcomeMessage"></div>
+        <ul>
+            <li><a href="index.html">主页</a></li>
+            <li><a href="practise.html">练习</a></li>
+            <li><a href="challenge.html">挑战</a></li>
+            <li><a href="#" onclick="logout()">登出</a></li>
+        </ul>
+    </nav>
+
+    <section>
+        <h1>赶紧开始练习吧！</h1>
+        <p>[注] 挑战可以增加积分！</p>
+        <p>快去主页查看排行榜吧</p>
+        <p id="userPoints" style="color: blue;"></p>
+    </section>
+
+    <script>
+        // 获取用户积分的函数
+        function getPoints(username) {
+            const points = localStorage.getItem(`${username}_points`);
+            return points ? parseInt(points, 10) : 0; // 返回积分（数字类型）
+        }
+
+        // 页面加载时显示欢迎信息和积分
+        window.onload = function () {
+            const username = localStorage.getItem('loggedInUser');
+            const welcomeMessageDiv = document.getElementById('welcomeMessage');
+
+            if (username) {
+                // 显示欢迎信息
+                welcomeMessageDiv.innerText = `欢迎，${username}`;
+                
+                // 获取并显示用户积分
+                const points = getPoints(username);
+                document.getElementById('userPoints').innerText = `你的积分: ${points}`;
+            } else {
+                // 如果未登录，跳转回登录页面
+                alert("您还未登录，请先登录！");
+                window.location.href = "index.html";
+            }
+        };
+
+        // 登出功能
+        function logout() {
+            // 移除登录状态
+            localStorage.removeItem('loggedInUser');
+            alert("已成功登出！");
+            // 跳转回登录页面
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>

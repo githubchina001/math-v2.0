@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>计算练习</title>
+    <link rel="stylesheet" href="index.css">
+    <style>
+        .hidden {
+            display: none;
+        }
+        .visible {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div>登录</div>
+        <ul>
+            <li><a href="index.html">主页</a></li>
+            <li><a href="practise.html">练习</a></li>
+            <li><a href="challenge.html">挑战</a></li>
+            <li><a href="users.html">用户</a></li>
+        </ul>
+    </nav>
+    <section>
+    <h1>选择操作</h1>
+    <button class="button" onclick="showRegister()">注册</button>
+
+    <button  class="button" onclick="showLogin()">登录</button>
+
+    <div id="registerSection" class="hidden">
+        <h2>注册</h2>
+        <input type="text" id="registerUsername" placeholder="Username" />
+        <input type="password" id="registerPassword" placeholder="Password" />
+        <button onclick="register()">注册</button>
+    </div>
+
+    <div id="loginSection" class="hidden">
+        <h2>登录</h2>
+        <input type="text" id="loginUsername" placeholder="Username" />
+        <input type="password" id="loginPassword" placeholder="Password" />
+        <button onclick="login()">登录</button>
+    </div>
+
+    <p id="message" style="color: green;"></p>
+    <section>
+    <script>
+        // 页面加载时检查是否已登录
+        window.onload = function () {
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            if (loggedInUser) {
+                // 如果已登录，自动跳转到 user_page.html
+                window.location.href = "user_page.html";
+            }
+        };
+
+        // 显示注册表单
+        function showRegister() {
+            document.getElementById('registerSection').classList.remove('hidden');
+            document.getElementById('registerSection').classList.add('visible');
+            document.getElementById('loginSection').classList.remove('visible');
+            document.getElementById('loginSection').classList.add('hidden');
+        }
+
+        // 显示登录表单
+        function showLogin() {
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('loginSection').classList.add('visible');
+            document.getElementById('registerSection').classList.remove('visible');
+            document.getElementById('registerSection').classList.add('hidden');
+        }
+
+        // 使用 SHA-256 对密码进行加密
+        function hashPassword(password) {
+            return crypto.subtle.digest('SHA-256', new TextEncoder().encode(password))
+                .then(hashBuffer => {
+                    return Array.from(new Uint8Array(hashBuffer))
+                        .map(byte => byte.toString(16).padStart(2, '0'))
+                        .join('');
+                });
+        }
+
+        // 注册功能
+        async function register() {
+            const username = document.getElementById('registerUsername').value;
+            const password = document.getElementById('registerPassword').value;
+
+            if (!username || !password) {
+                alert("Username and password cannot be empty.");
+                return;
+            }
+
+            // 检查用户名是否已存在
+            if (localStorage.getItem(username)) {
+                alert("Username already exists. Please choose another.");
+                return;
+            }
+
+            // 对密码进行加密
+            const hashedPassword = await hashPassword(password);
+            localStorage.setItem(username, hashedPassword);
+            alert("Registration successful! You can now log in.");
+
+            // 清除文本框内容
+            document.getElementById('registerUsername').value = '';
+            document.getElementById('registerPassword').value = '';
+
+            // 设置登录状态并跳转
+            localStorage.setItem('loggedInUser', username);
+            window.location.href = "user_page.html";
+        }
+
+        // 登录功能
+        async function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!username || !password) {
+                alert("Username and password cannot be empty.");
+                return;
+            }
+
+            // 检查用户名是否存在
+            const storedPassword = localStorage.getItem(username);
+            if (storedPassword) {
+                // 对输入的密码进行加密后比对
+                const hashedPassword = await hashPassword(password);
+                if (storedPassword === hashedPassword) {
+                    document.getElementById('message').innerText = `Welcome, ${username}!`;
+
+                    // 清除文本框内容
+                    document.getElementById('loginUsername').value = '';
+                    document.getElementById('loginPassword').value = '';
+
+                    // 设置登录状态并跳转
+                    localStorage.setItem('loggedInUser', username);
+                    window.location.href = "user_page.html";
+                } else {
+                    alert("Invalid username or password.");
+                }
+            } else {
+                alert("Invalid username or password.");
+            }
+        }
+
+
+        // 初始化积分
+function initializePoints(username) {
+    localStorage.setItem(`${username}_points`, '0'); // 设置初始积分为 0
+}
+
+// 获取用户积分
+function getPoints(username) {
+    const points = localStorage.getItem(`${username}_points`);
+    return points ? parseInt(points, 10) : 0; // 返回积分（数字类型）
+}
+
+// 更新用户积分
+function updatePoints(username, pointsToAdd) {
+    const currentPoints = getPoints(username);
+    const newPoints = currentPoints + pointsToAdd;
+    localStorage.setItem(`${username}_points`, newPoints.toString());
+}
+
+// 在注册时初始化积分
+async function register() {
+    const username = document.getElementById('registerUsername').value;
+    const password = document.getElementById('registerPassword').value;
+
+    if (!username || !password) {
+        alert("Username and password cannot be empty.");
+        return;
+    }
+
+    // 检查用户名是否已存在
+    if (localStorage.getItem(username)) {
+        alert("Username already exists. Please choose another.");
+        return;
+    }
+
+    // 对密码进行加密
+    const hashedPassword = await hashPassword(password);
+    localStorage.setItem(username, hashedPassword);
+    alert("Registration successful! You can now log in.");
+
+    // 初始化用户积分
+    initializePoints(username);
+
+    // 清除文本框内容
+    document.getElementById('registerUsername').value = '';
+    document.getElementById('registerPassword').value = '';
+
+    // 设置登录状态并跳转
+    localStorage.setItem('loggedInUser', username);
+    window.location.href = "user_page.html";
+}
+
+// 示例：登录成功后显示积分（在用户页面中使用）
+function showUserPoints() {
+    const loggedInUser = localStorage.getItem('loggedInUser');
+    if (loggedInUser) {
+        const points = getPoints(loggedInUser);
+        document.getElementById('message').innerText = `Welcome, ${loggedInUser}! Your points: ${points}`;
+    }
+}
+
+
+    </script>
+</body>
+</html>

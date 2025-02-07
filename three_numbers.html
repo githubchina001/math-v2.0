@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三数混合运算练习</title>
+    <link rel="stylesheet" href="index.css">
+    <style>
+        /* 样式可以根据需要自定义 */
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div>三数混合运算练习</div>
+        <ul>
+            <li><a href="practise.html">返回</a></li>
+        </ul>
+    </nav>
+
+    <br>
+    <div id="setup">
+        <label>
+            数字范围：
+            <input type="number" id="min" placeholder="最小值"> ~ <input type="number" id="max" placeholder="最大值">
+        </label>
+        <br>
+        <label>
+            运算类型：
+            <select id="operator">
+                <option value="add-sub">加减混合</option>
+                <option value="mul-div">乘除混合</option>
+                <option value="all">加减乘除混合</option>
+            </select>
+        </label>
+        <br>
+        <label>
+            题量
+            <input type="number" id="numQuestions" min="1" placeholder="准备要做多少题？">
+        </label>
+        <br>
+        <button class="Sbutton" onclick="startQuiz()">开始练习</button>
+    </div>
+
+    <div id="quiz" style="display:none;">
+        <form id="quizForm"></form>
+        <button class="Sbutton" onclick="submitQuiz()">提交</button> 
+    </div>
+
+    <div id="summary" class="summary"></div>
+
+    <script>
+        let startTime;
+
+        function startQuiz() {
+            const min = parseInt(document.getElementById('min').value);
+            const max = parseInt(document.getElementById('max').value);
+            const operator = document.getElementById('operator').value;
+            const numQuestions = parseInt(document.getElementById('numQuestions').value);
+
+            if (isNaN(min) || isNaN(max) || isNaN(numQuestions) || numQuestions <= 0) {
+                alert('请输入正确的数字！');
+                return;
+            }
+
+            const quizForm = document.getElementById('quizForm');
+            quizForm.innerHTML = '';
+
+            const operators = {
+                'add-sub': ['+', '-'],
+                'mul-div': ['×', '÷'],
+                'all': ['+', '-', '×', '÷']
+            };
+
+            for (let i = 0; i < numQuestions; i++) {
+                let num1 = Math.floor(Math.random() * (max - min + 1)) + min;
+                let num2 = Math.floor(Math.random() * (max - min + 1)) + min;
+                let num3 = Math.floor(Math.random() * (max - min + 1)) + min;
+
+                const op1 = operators[operator][Math.floor(Math.random() * operators[operator].length)];
+                const op2 = operators[operator][Math.floor(Math.random() * operators[operator].length)];
+
+                // 确保除法是整除
+                if (op1 === '÷') {
+                    while (num2 === 0 || num1 % num2 !== 0) {
+                        num2 = Math.floor(Math.random() * (max - min + 1)) + min;
+                    }
+                }
+
+                if (op2 === '÷') {
+                    while (num3 === 0 || (num2 % num3 !== 0)) {
+                        num3 = Math.floor(Math.random() * (max - min + 1)) + min;
+                    }
+                }
+
+                const questionId = `question${i + 1}`;
+                quizForm.innerHTML += `<div class="question">
+                    <label>${i + 1}. ${num1} ${op1} ${num2} ${op2} ${num3} = 
+                        <input type="number" id="${questionId}" data-num1="${num1}" data-num2="${num2}" data-num3="${num3}" data-op1="${op1}" data-op2="${op2}">
+                    </label>
+                </div>`;
+            }
+
+            document.getElementById('setup').style.display = 'none';
+            document.getElementById('quiz').style.display = 'block';
+            startTime = new Date();
+        }
+
+        function submitQuiz() {
+            const quizForm = document.getElementById('quizForm');
+            const inputs = quizForm.querySelectorAll('input');
+
+            let correct = 0;
+            let incorrect = 0;
+            const mistakes = [];
+
+            inputs.forEach((input, index) => {
+                const num1 = parseInt(input.dataset.num1);
+                const num2 = parseInt(input.dataset.num2);
+                const num3 = parseInt(input.dataset.num3);
+                const op1 = input.dataset.op1;
+                const op2 = input.dataset.op2;
+                const userAnswer = parseFloat(input.value);
+
+                let intermediateAnswer;
+                let correctAnswer;
+
+                switch (op1) {
+                    case '+':
+                        intermediateAnswer = num1 + num2;
+                        break;
+                    case '-':
+                        intermediateAnswer = num1 - num2;
+                        break;
+                    case '×':
+                        intermediateAnswer = num1 * num2;
+                        break;
+                    case '÷':
+                        intermediateAnswer = num1 / num2;
+                        break;
+                }
+
+                switch (op2) {
+                    case '+':
+                        correctAnswer = intermediateAnswer + num3;
+                        break;
+                    case '-':
+                        correctAnswer = intermediateAnswer - num3;
+                        break;
+                    case '×':
+                        correctAnswer = intermediateAnswer * num3;
+                        break;
+                    case '÷':
+                        correctAnswer = intermediateAnswer / num3;
+                        break;
+                }
+
+                if (userAnswer === correctAnswer) {
+                    correct++;
+                } else {
+                    incorrect++;
+                    mistakes.push(`${index + 1}、${num1} ${op1} ${num2} ${op2} ${num3} = ${correctAnswer}（我的答案：${userAnswer || '未填写'}）`);
+                }
+            });
+
+            const endTime = new Date();
+            const timeTaken = (endTime - startTime) / 1000;
+
+            const summary = document.getElementById('summary');
+            summary.innerHTML = `
+                结算<br>
+                题数：${inputs.length} 题<br>
+                错误：${incorrect} 题<br>
+                正确：${correct} 题<br>
+                用时：${timeTaken.toFixed(3)} 秒<br>
+                平均用时：${(timeTaken / inputs.length).toFixed(3)} 秒/题<br>
+                <br>
+
+                错题<br>
+                ${mistakes.length ? mistakes.join('<br>') : '无'}<br>
+                
+            `;
+
+            document.getElementById('quiz').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

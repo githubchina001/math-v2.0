@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>计算练习</title>
+    <link rel="stylesheet" href="index.css">
+    <style>
+        table {
+            width: 50%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #aa8d3ed0;
+            color: white;
+        }
+
+        h3 {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div>计算练习</div>
+        <ul>
+            <li><a href="index.html">主页</a></li>
+            <li><a href="practise.html">练习</a></li>
+            <li><a href="challenge.html">挑战</a></li>
+            <li><a href="users.html">用户</a></li>
+        </ul>
+    </nav>
+
+    <section>
+        <h3>公告</h3>
+        <p>练习功能已经制作完成，但是练习报告不能保存，注意自行截图保存</p>
+        <p>挑战功能已完成（别忘了注册和登录），可以去加积分了！</p>
+    </section>
+
+    <section>
+        <h3>用户积分排行榜</h3>
+        <table id="leaderboard">
+            <thead>
+                <tr>
+                    <th>排名</th>
+                    <th>用户名</th>
+                    <th>积分</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 排行榜内容将通过脚本动态添加 -->
+            </tbody>
+        </table>
+    </section>
+
+    <script>
+        function loadLeaderboard() {
+            const leaderboard = [];
+            const allKeys = Object.keys(localStorage);
+
+            // 遍历 localStorage，查找 "_points" 后缀的键
+            allKeys.forEach(key => {
+                if (key.endsWith('_points')) {
+                    const username = key.replace('_points', '');
+                    const points = parseInt(localStorage.getItem(key)) || 0;
+                    leaderboard.push({ username, points });
+                }
+            });
+
+            // 按积分降序排序
+            leaderboard.sort((a, b) => b.points - a.points);
+
+            // 动态生成表格内容
+            const leaderboardBody = document.getElementById('leaderboard').querySelector('tbody');
+            leaderboardBody.innerHTML = ''; // 清空旧内容
+
+            leaderboard.forEach((entry, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${entry.username}</td>
+                    <td>${entry.points}</td>
+                `;
+                leaderboardBody.appendChild(row);
+            });
+        }
+
+        // 页面加载时运行
+        window.onload = function() {
+            loadLeaderboard();
+        };
+    </script>
+
+</body>
+
+</html>
